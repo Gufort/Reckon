@@ -1,0 +1,1 @@
+dotnet tool run GPLEX /out:Task\SimpleLex.cs /noparser Task\SimpleLex.lex

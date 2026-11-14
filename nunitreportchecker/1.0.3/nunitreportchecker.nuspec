@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>NunitReportChecker</id>
+    <version>1.0.3</version>
+    <title>NunitReportChecker</title>
+    <authors>SFedU</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <description>NUnit report checker for student assignment gradin</description>
+    <releaseNotes>Initial version</releaseNotes>
+    <copyright>SFedU</copyright>
+    <tags>NUnit SFedU</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.8">
+        <dependency id="Newtonsoft.Json" version="13.0.3" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Report": {
+      "commandName": "Project",
+      "commandLineArgs": ". user"
+    }
+  }
+}

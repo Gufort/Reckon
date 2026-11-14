@@ -1,0 +1,17 @@
+stages:
+  - build_test_report
+
+build_all:
+  stage: build_test_report
+  before_script:
+    - nuget restore
+    - dotnet tool run GPLEX /unicode /out:Task\SimpleLex.cs Task\SimpleLex.lex
+    - dotnet tool run GPPG /no-lines /gplex /out:Task\SimpleYacc.cs Task\SimpleYacc.y
+    - msbuild TaskSolution.sln
+  script:
+    - .\TestRunner\bin\Debug\net8.0\TestRunner.exe
+  after_script:
+    - .\NunitReport\bin\Debug\net8.0\NunitReport.exe ${CI_PROJECT_DIR} ${GITLAB_USER_LOGIN}
+  tags:
+    - windows
+    - dotnet

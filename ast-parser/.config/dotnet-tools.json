@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "gplexnetcore": {
+      "version": "1.0.0",
+      "commands": [
+        "Gplex"
+      ],
+      "rollForward": false
+    },
+    "gppgnetcore": {
+      "version": "1.0.0",
+      "commands": [
+        "GPPG"
+      ],
+      "rollForward": false
+    }
+  }
+}

@@ -1,0 +1,5 @@
+A1 := 10
+A2 := 20
+A3 := A1 + A2
+doubled := MAP(A1:A3, x -> x * 2)
+total := REDUCE(A1:A3, 0, (acc, x) -> acc + x)
