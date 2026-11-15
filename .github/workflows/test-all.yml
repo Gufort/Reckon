@@ -1,0 +1,88 @@
+name: Test all Reckon projects
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  simple-lexer:
+    name: 1. simple-lexer
+    runs-on: windows-latest
+    env:
+      RECKON_PROJECT: simple-lexer
+    steps: &test_steps
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore test dependencies
+        working-directory: ${{ env.RECKON_PROJECT }}
+        run: dotnet restore TestRunner/TestRunner.csproj --source https://api.nuget.org/v3/index.json
+
+      - name: Build test runner
+        working-directory: ${{ env.RECKON_PROJECT }}
+        run: dotnet build TestRunner/TestRunner.csproj --configuration Debug --no-restore
+
+      - name: Run NUnit tests
+        working-directory: ${{ env.RECKON_PROJECT }}
+        run: dotnet run --project TestRunner/TestRunner.csproj --configuration Debug --no-build
+
+  generated-lexer:
+    name: 2. generated-lexer
+    needs: simple-lexer
+    runs-on: windows-latest
+    env:
+      RECKON_PROJECT: generated-lexer
+    steps: *test_steps
+
+  descent-parser:
+    name: 3. descent-parser
+    needs: generated-lexer
+    runs-on: windows-latest
+    env:
+      RECKON_PROJECT: descent-parser
+    steps: *test_steps
+
+  generated-parser:
+    name: 4. generated-parser
+    needs: descent-parser
+    runs-on: windows-latest
+    env:
+      RECKON_PROJECT: generated-parser
+    steps: *test_steps
+
+  ast-parser:
+    name: 5. ast-parser
+    needs: generated-parser
+    runs-on: windows-latest
+    env:
+      RECKON_PROJECT: ast-parser
+    steps: *test_steps
+
+  ast-visitors:
+    name: 6. ast-visitors
+    needs: ast-parser
+    runs-on: windows-latest
+    env:
+      RECKON_PROJECT: ast-visitors
+    steps: *test_steps
+
+  code-generator:
+    name: 7. code-generator
+    needs: ast-visitors
+    runs-on: windows-latest
+    env:
+      RECKON_PROJECT: code-generator
+    steps: *test_steps
+
+  language-tools:
+    name: 8. language-tools
+    needs: code-generator
+    runs-on: windows-latest
+    env:
+      RECKON_PROJECT: language-tools
+    steps: *test_steps
