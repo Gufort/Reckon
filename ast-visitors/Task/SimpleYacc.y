@@ -51,89 +51,89 @@
 %%
 
 program     : definitions
-              { /* stub */ }
+              { root = new ProgramNode($1); $$ = (ProgramNode)root; }
             ;
 
 definitions : definition
-              { /* stub */ }
+              { $$ = new List<CellDefNode> { $1 }; }
             | definitions definition
-              { /* stub */ }
+              { $$ = $1; $1.Add($2); }
             ;
 
 definition  : CELLREF ASSIGN expr
-              { /* stub */ }
+              { $$ = new CellDefNode(new CellRefNode($1), $3); }
             | NAME ASSIGN expr
-              { /* stub */ }
+              { $$ = new CellDefNode(new NameNode($1), $3); }
             | NAME LPAREN params RPAREN ASSIGN expr
-              { /* stub */ }
+              { $$ = new CellDefNode(new NameNode($1), new LambdaNode($3, $6)); }
             ;
 
 expr        : expr EQ additive
-              { /* stub */ }
+              { $$ = new BinOpNode($1, $3, "="); }
             | expr NEQ additive
-              { /* stub */ }
+              { $$ = new BinOpNode($1, $3, "<>"); }
             | expr LT additive
-              { /* stub */ }
+              { $$ = new BinOpNode($1, $3, "<"); }
             | expr GT additive
-              { /* stub */ }
+              { $$ = new BinOpNode($1, $3, ">"); }
             | expr LEQ additive
-              { /* stub */ }
+              { $$ = new BinOpNode($1, $3, "<="); }
             | expr GEQ additive
-              { /* stub */ }
+              { $$ = new BinOpNode($1, $3, ">="); }
             | additive
               { $$ = $1; }
             ;
 
 additive    : additive PLUS multiplicative
-              { /* stub */ }
+              { $$ = new BinOpNode($1, $3, "+"); }
             | additive MINUS multiplicative
-              { /* stub */ }
+              { $$ = new BinOpNode($1, $3, "-"); }
             | additive CONCAT multiplicative
-              { /* stub */ }
+              { $$ = new BinOpNode($1, $3, "&"); }
             | multiplicative
               { $$ = $1; }
             ;
 
 multiplicative : multiplicative MULT power
-                { /* stub */ }
+                { $$ = new BinOpNode($1, $3, "*"); }
                | multiplicative DIV power
-                { /* stub */ }
+                { $$ = new BinOpNode($1, $3, "/"); }
                | power
                 { $$ = $1; }
                ;
 
 power       : power POW primary
-              { /* stub */ }
+              { $$ = new BinOpNode($1, $3, "^"); }
             | primary
               { $$ = $1; }
             ;
 
 primary     : MINUS primary %prec UMINUS
-              { /* stub */ }
+              { $$ = new UnaryOpNode($2, "-"); }
             | PLUS primary %prec UPLUS
-              { /* stub */ }
+              { $$ = new UnaryOpNode($2, "+"); }
             | atom
               { $$ = $1; }
             ;
 
 atom        : NUMBER
-              { /* stub */ }
+              { $$ = new NumberNode($1); }
             | REAL
-              { /* stub */ }
+              { $$ = new NumberNode($1); }
             | STRING
-              { /* stub */ }
+              { $$ = new StringNode(ParserHelper.UnescapeString($1)); }
             | BOOL
-              { /* stub */ }
+              { $$ = new BoolNode($1); }
             | ERROR
-              { /* stub */ }
+              { $$ = new ErrorNode($1); }
             | CELLREF
-              { /* stub */ }
+              { $$ = new CellRefNode($1); }
             | COLREF
-              { /* stub */ }
+              { $$ = new ColRefNode($1); }
             | ROWREF
-              { /* stub */ }
+              { $$ = new RowRefNode($1); }
             | NAME
-              { /* stub */ }
+              { $$ = new NameNode($1); }
             | call
               { $$ = $1; }
             | range
@@ -141,59 +141,59 @@ atom        : NUMBER
             | sheetref
               { $$ = $1; }
             | LPAREN expr RPAREN
-              { /* stub */ }
+              { $$ = $2; }
             | lambda
               { $$ = $1; }
             ;
 
 call        : FUNCNAME LPAREN args RPAREN
-              { /* stub */ }
+              { $$ = new CallNode($1, $3); }
             | FUNCNAME LPAREN RPAREN
-              { /* stub */ }
+              { $$ = new CallNode($1, new List<ExprNode>()); }
             | NAME LPAREN args RPAREN
-              { /* stub */ }
+              { $$ = new CallNode($1, $3); }
             | NAME LPAREN RPAREN
-              { /* stub */ }
+              { $$ = new CallNode($1, new List<ExprNode>()); }
             | MAP LPAREN args RPAREN
-              { /* stub */ }
+              { $$ = new CallNode("MAP", $3); }
             | FILTER LPAREN args RPAREN
-              { /* stub */ }
+              { $$ = new CallNode("FILTER", $3); }
             | REDUCE LPAREN args RPAREN
-              { /* stub */ }
+              { $$ = new CallNode("REDUCE", $3); }
             | SORT LPAREN args RPAREN
-              { /* stub */ }
+              { $$ = new CallNode("SORT", $3); }
             | UNIQUE LPAREN args RPAREN
-              { /* stub */ }
+              { $$ = new CallNode("UNIQUE", $3); }
             | LAMBDA LPAREN args RPAREN
-              { /* stub */ }
+              { $$ = new CallNode("LAMBDA", $3); }
             | LAMBDA LPAREN RPAREN
-              { /* stub */ }
+              { $$ = new CallNode("LAMBDA", new List<ExprNode>()); }
             ;
 
 lambda      : NAME ARROW expr
-              { /* stub */ }
+              { $$ = new LambdaNode(new List<string> { $1 }, $3); }
             | LPAREN params RPAREN ARROW expr
-              { /* stub */ }
+              { $$ = new LambdaNode($2, $5); }
             ;
 
 range       : CELLREF COLON CELLREF
-              { /* stub */ }
+              { $$ = new RangeNode($1, $3); }
             ;
 
 sheetref    : NAME BANG CELLREF
-              { /* stub */ }
+              { $$ = new SheetRefNode($1, $3); }
             ;
 
 args        : expr
-              { /* stub */ }
+              { $$ = new List<ExprNode> { $1 }; }
             | args COMMA expr
-              { /* stub */ }
+              { $$ = $1; $1.Add($3); }
             ;
 
 params      : NAME
-              { /* stub */ }
+              { $$ = new List<string> { $1 }; }
             | params COMMA NAME
-              { /* stub */ }
+              { $$ = $1; $1.Add($3); }
             ;
 
 %%

@@ -31,7 +31,7 @@ IDENT   {Alpha}{AlphaDigit}*
 
 {INTNUM}                     { yylval.iVal = int.Parse(yytext); return (int)Tokens.NUMBER; }
 
-{REALNUM}                    { yylval.dVal = double.Parse(yytext); return (int)Tokens.REAL; }
+{REALNUM}                    { yylval.dVal = double.Parse(yytext, CultureInfo.InvariantCulture); return (int)Tokens.REAL; }
 
 \$?[A-Z]+\$?{Digit}+        { yylval.sVal = yytext; return (int)Tokens.CELLREF; }
 
